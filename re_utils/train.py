@@ -120,14 +120,14 @@ def train_ner(
                 ground_truth = []
                 with torch.no_grad():
                     for batch in test_data_loader:
-                        labels = batch["labels"]
+                        labels = batch["labels"].to(device)
                         del batch["labels"]
                         batch = dict_to_device(batch)
 
                         prediction = model.decode(**batch)
 
                         flatten_prediction = [item for sublist in prediction for item in sublist]
-                        flatten_labels = torch.masked_select(labels, batch["attention_mask"].bool()).tolist()
+                        flatten_labels = torch.masked_select(labels, batch["attention_mask"].to(device).bool()).tolist()
 
                         predictions.extend(flatten_prediction)
                         ground_truth.extend(flatten_labels)
